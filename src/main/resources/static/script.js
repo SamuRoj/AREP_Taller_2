@@ -1,34 +1,36 @@
-document.getElementById("add-activity-btn").addEventListener("click", function() {
+function addActivity(){
+    const time = document.getElementById("time").value;
+    const activity = document.getElementById("activity").value;
 
-    const hora = prompt("Ingresa la hora de la actividad (ej. 08:00 AM):");
-    const actividad = prompt("Ingresa el nombre de la actividad:");
+    const url = "/add?time=" + time + "&activity=" + activity;
 
-    if (hora && actividad) {
-        const table = document.getElementById("timetable").getElementsByTagName('tbody')[0];
-        const newRow = table.insertRow();
+    fetch (url, {method: 'POST'})
+        .then(console.log("Activity added."))
+        .catch(error => console.error('Error: ', error));
 
-        const cellHora = newRow.insertCell(0);
-        const cellActividad = newRow.insertCell(1);
-        const cellAcciones = newRow.insertCell(2);
+    var tableBody = document.getElementById("timetable").getElementsByTagName("tbody")[0];
+    var newRow = document.createElement("tr");
 
-        cellHora.textContent = hora;
-        cellActividad.textContent = actividad;
+    var cell1 = document.createElement("td");
+    var cell2 = document.createElement("td");
+    var cell3 = document.createElement("td");
 
-        const deleteBtn = document.createElement("button");
-        deleteBtn.textContent = "Eliminar";
-        deleteBtn.classList.add("delete-btn");
+    cell1.textContent = time;
+    cell2.textContent = activity;
 
-        deleteBtn.addEventListener("click", function() {
-            table.deleteRow(newRow.rowIndex - 1);
-        });
+    var deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete";
+    deleteButton.classList.add("delete-btn");
 
-        cellAcciones.appendChild(deleteBtn);
-    }
-});
+    deleteButton.onclick = function() {
+        newRow.remove();
+    };
 
-document.querySelectorAll(".delete-btn").forEach(button => {
-    button.addEventListener("click", function() {
-        const row = this.closest("tr");
-        row.remove();
-    });
-});
+    cell3.appendChild(deleteButton);
+
+    newRow.appendChild(cell1);
+    newRow.appendChild(cell2);
+    newRow.appendChild(cell3);
+
+    tableBody.appendChild(newRow)
+}

@@ -5,8 +5,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 
 public class HttpServer {
+
+    private static HashMap<String, String> activities = new HashMap<>();
+
     public static void main(String[] args) throws IOException, URISyntaxException {
         ServerSocket serverSocket = new ServerSocket(23727);
         boolean isRunning = true;
@@ -14,22 +18,35 @@ public class HttpServer {
             Socket clientSocket = serverSocket.accept();
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            String inputLine, outputLine;
+            String inputLine = "";
             boolean isFirstLine = true;
+            String outputLine = "";
             String file = "";
+            String method = "";
 
             while((inputLine = in.readLine()) != null){
                 if(isFirstLine){
+                    method = inputLine.split(" ")[0];
                     file = inputLine.split(" ")[1];
                     isFirstLine = false;
                 }
-                if (!in.ready()) break;
+                if (inputLine.isEmpty()) break;
             }
 
             URI resourceURI = new URI(file);
-            outputLine = obtainFileRest(resourceURI.getPath(), clientSocket.getOutputStream());
-            out.println(outputLine);
+            if(method.equals("GET")){
+                outputLine = obtainFileRest(resourceURI.getPath(), clientSocket.getOutputStream());
+            }
+            else if(method.equals("POST")){
+                String time = resourceURI.getQuery().split("&")[0].split("=")[1];
+                String activity = resourceURI.getQuery().split("&")[1].split("=")[1];
+                activities.put(time, activity);
+                outputLine = "HTTP/1.1 201 Accepted\r\n"
+                        + "Content-Type: text/plain\r\n"
+                        + "\r\n";
+            }
 
+            out.println(outputLine);
             out.close();
             in.close();
             clientSocket.close();
