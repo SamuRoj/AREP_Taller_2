@@ -5,12 +5,13 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
 
 public class HttpServer {
 
-    private static HashMap<String, String> activities = new HashMap<>();
+    private static List<Activity> activities = new ArrayList<>();
 
     public static void main(String[] args) throws IOException, URISyntaxException {
         ServerSocket serverSocket = new ServerSocket(23727);
@@ -31,7 +32,7 @@ public class HttpServer {
                     file = inputLine.split(" ")[1];
                     isFirstLine = false;
                 }
-                if (inputLine.isEmpty()) break;
+                if (!in.ready()) break;
             }
 
             URI resourceURI = new URI(file);
@@ -42,14 +43,15 @@ public class HttpServer {
             else if(method.equals("POST")){
                 String time = resourceURI.getQuery().split("&")[0].split("=")[1];
                 String activity = resourceURI.getQuery().split("&")[1].split("=")[1];
-                activities.put(time, activity);
+                activities.add(new Activity(time, activity));
                 outputLine = "HTTP/1.1 201 Accepted\r\n"
                         + "Content-Type: text/plain\r\n"
                         + "\r\n";
             }
             else if(method.equals("DELETE")){
                 String time = resourceURI.getQuery().split("=")[1];
-                activities.remove(time);
+                Predicate<Activity> condition = activity -> activity.getTime().equals(time);
+                activities.removeIf(condition);
                 outputLine = "HTTP/1.1 201 Accepted\r\n"
                         + "Content-Type: text/plain\r\n"
                         + "\r\n";
@@ -60,7 +62,6 @@ public class HttpServer {
                         + "\r\n";
             }
 
-            System.out.println("Activities: " + activities);
             out.println(outputLine);
             out.close();
             in.close();
@@ -114,14 +115,14 @@ public class HttpServer {
         json.append("[");
 
         boolean first = true;
-        for (Map.Entry<String, String> entry : activities.entrySet()) {
+        for (Activity a : activities) {
             if (!first) {
                 json.append(",");
             }
             first = false;
             json.append("{")
-                    .append("\"time\": \"").append(entry.getKey()).append("\", ")
-                    .append("\"activity\": \"").append(entry.getValue()).append("\"")
+                    .append("\"time\": \"").append(a.getTime()).append("\", ")
+                    .append("\"activity\": \"").append(a.getName()).append("\"")
                     .append("}");
         }
 

@@ -1,87 +1,99 @@
-# Project Title
+# Simple Web Server
 
-One Paragraph of project description goes here
+This project implements a simple web server that provides static files to build a web application and uses a REST 
+service for its functionality. 
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
 ### Prerequisites
 
-What things you need to install the software and how to install them
+### 1. **Java Development Kit (JDK)**
+
+- To check if Java is installed, run:
+
+  ```
+    java -version
+  ```
+  
+- If Java is not installed, download it from the official Oracle [website](https://www.oracle.com/co/java/technologies/downloads/).
+
+### 2. **Maven**
+
+- To check if Maven is installed, run:
 
 ```
-Give examples
+    mvn --version
 ```
+
+- If Maven is not installed, download it from the official Apache Maven [website](https://maven.apache.org/download.cgi).
+
+### 3. Git
+
+- To check if Git is installed, run:
+
+```
+    git --version
+```
+
+- If Git is not installed, download it from the official Git [website](https://git-scm.com/downloads).
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
+1. Clone the repository to your local machine using Git.
 
 ```
-Give the example
+    git clone https://github.com/SamuRoj/AREP_Taller_1.git
 ```
 
-And repeat
+2. Navigate to the project directory.
 
 ```
-until finished
+    cd AREP_Taller_1
 ```
 
-End with an example of getting some data out of the system or using it for a little demo
+3. Build the project by running the following command.
+
+```
+    mvn clean install
+```
+
+4. Execute the project with Maven.
+
+```
+    java -cp target/taller-1-1.0-SNAPSHOT.jar edu.escuelaing.arep.app.HttpServer
+```
+
+5. Once the server is running, open your web browser and visit:
+
+```
+    http://localhost:23727
+```
+
+- Startup page
+
+![web_page.png](src/main/resources/img/web_page.png)
+
+- Usage page
+
+![usage.png](src/main/resources/img/usage.png)
+
+## Architecture
+
+
 
 ## Running the tests
 
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
 
 ## Built With
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
+* [Java Development Kit](https://www.oracle.com/co/java/technologies/downloads/) - Software Toolkit
 * [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
+* [Git](https://git-scm.com/) - Distributed Version Control System
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+* **Samuel Rojas** - [SamuRoj](https://github.com/SamuRoj)
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+This project is licensed under the GNU License - see the [LICENSE.md](LICENSE.md) file for details
