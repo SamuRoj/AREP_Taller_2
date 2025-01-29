@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.Map;
 
 public class HttpServer {
 
@@ -35,7 +36,8 @@ public class HttpServer {
 
             URI resourceURI = new URI(file);
             if(method.equals("GET")){
-                outputLine = obtainFileRest(resourceURI.getPath(), clientSocket.getOutputStream());
+                if(resourceURI.getPath().startsWith("/api/activity")) outputLine = obtainActivities();
+                else outputLine = obtainFile(resourceURI.getPath(), clientSocket.getOutputStream());
             }
             else if(method.equals("POST")){
                 String time = resourceURI.getQuery().split("&")[0].split("=")[1];
@@ -45,7 +47,20 @@ public class HttpServer {
                         + "Content-Type: text/plain\r\n"
                         + "\r\n";
             }
+            else if(method.equals("DELETE")){
+                String time = resourceURI.getQuery().split("=")[1];
+                activities.remove(time);
+                outputLine = "HTTP/1.1 201 Accepted\r\n"
+                        + "Content-Type: text/plain\r\n"
+                        + "\r\n";
+            }
+            else{
+                outputLine = "HTTP/1.1 405 Method Now Allowed\r\n"
+                        + "Content-Type: text/plain\r\n"
+                        + "\r\n";
+            }
 
+            System.out.println("Activities: " + activities);
             out.println(outputLine);
             out.close();
             in.close();
@@ -54,7 +69,7 @@ public class HttpServer {
         serverSocket.close();
     }
 
-    private static String obtainFileRest(String path, OutputStream out) throws IOException {
+    private static String obtainFile(String path, OutputStream out) throws IOException {
         String file = path.equals("/") ? "index.html" : path.split("/")[1];
         String extension = file.split("\\.")[1];
         String header = obtainContentType(extension);
@@ -74,11 +89,12 @@ public class HttpServer {
                     if (!in.ready()) break;
                 }
                 in.close();
+                return  response + fileContent;
             } catch (FileNotFoundException e) {
                 return notFound;
             }
         }
-        else{
+        else if(extension.equals("jpg") || extension.equals("jpeg") || extension.equals("png")){
             out.write(response.getBytes());
             File imageFile = new File("src/main/resources/static/" + file);
             if(imageFile.exists()){
@@ -90,7 +106,30 @@ public class HttpServer {
             }
             return notFound;
         }
-        return  response + fileContent;
+        else return notFound;
+    }
+
+    private static String obtainActivities(){
+        StringBuilder json = new StringBuilder();
+        json.append("[");
+
+        boolean first = true;
+        for (Map.Entry<String, String> entry : activities.entrySet()) {
+            if (!first) {
+                json.append(",");
+            }
+            first = false;
+            json.append("{")
+                    .append("\"time\": \"").append(entry.getKey()).append("\", ")
+                    .append("\"activity\": \"").append(entry.getValue()).append("\"")
+                    .append("}");
+        }
+
+        json.append("]");
+        return"HTTP/1.1 200 OK\r\n" +
+                "Content-Type: application/json\r\n" +
+                "\r\n" +
+                json;
     }
 
     private static String obtainContentType(String extension){
