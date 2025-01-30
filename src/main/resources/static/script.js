@@ -30,7 +30,6 @@ function getActivities(){
     .then(data => {
         const tableBody = document.querySelector('#timetable tbody');
         tableBody.innerHTML = '';
-        console.log("Datos obtenidos: ", data);
 
         data.forEach(item => {
             const row = document.createElement('tr');

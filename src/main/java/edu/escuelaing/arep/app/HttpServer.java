@@ -16,6 +16,7 @@ public class HttpServer {
     public static void main(String[] args) throws IOException, URISyntaxException {
         ServerSocket serverSocket = new ServerSocket(23727);
         boolean isRunning = true;
+        System.out.println("Server started.");
         while(isRunning){
             Socket clientSocket = serverSocket.accept();
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -70,7 +71,7 @@ public class HttpServer {
         serverSocket.close();
     }
 
-    private static String obtainFile(String path, OutputStream out) throws IOException {
+    static String obtainFile(String path, OutputStream out) throws IOException {
         String file = path.equals("/") ? "index.html" : path.split("/")[1];
         String extension = file.split("\\.")[1];
         String header = obtainContentType(extension);
@@ -90,7 +91,7 @@ public class HttpServer {
                     if (!in.ready()) break;
                 }
                 in.close();
-                return  response + fileContent;
+                return response + fileContent;
             } catch (FileNotFoundException e) {
                 return notFound;
             }
@@ -110,7 +111,7 @@ public class HttpServer {
         else return notFound;
     }
 
-    private static String obtainActivities(){
+    static String obtainActivities(){
         StringBuilder json = new StringBuilder();
         json.append("[");
 
@@ -133,7 +134,7 @@ public class HttpServer {
                 json;
     }
 
-    private static String obtainContentType(String extension){
+    static String obtainContentType(String extension){
         if(extension.equals("html") || extension.equals("css")) return "text/" + extension;
         else if(extension.equals("js")) return "text/javascript";
         else if(extension.equals("jpg") || extension.equals("jpeg")) return "image/jpeg";

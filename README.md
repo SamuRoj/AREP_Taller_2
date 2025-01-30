@@ -69,20 +69,45 @@ service for its functionality.
     http://localhost:23727
 ```
 
-- Startup page
+- This is the startup page where the user can plan his daily activities, you just need to fill the time and activity 
+input and click the add button to add to the web page table.
 
 ![web_page.png](src/main/resources/img/web_page.png)
 
-- Usage page
+- After the activity has been added you can delete or keep adding more. 
 
 ![usage.png](src/main/resources/img/usage.png)
 
 ## Architecture
 
+### Deployment Diagram
 
+![deployment.png](src/main/resources/img/deployment.png)
+
+### Overview
+
+This diagram summarized the interactions between the client and the HttpServer implementation.
+
+### Components
+
+- **HTML:** It is served through the HTTP server and allows the browser to render the web page.
+- **CSS:** It is also served from the server and is responsible for styling the page.
+- **JS:** It is served from the server and handles GET, POST, and DELETE requests to refresh the activity list on the page, 
+while also keeping the server updated on any changes made.
+- **HTTP Server:** It is responsible for serving the files requested by the client and processing the GET, POST, and DELETE 
+requests it receives.
 
 ## Running the tests
 
+- Execute them by running the following command:
+
+```
+    mvn test
+```
+
+- Image of the results:
+
+![tests.png](src/main/resources/img/tests.png)
 
 ## Built With
 
@@ -96,4 +121,4 @@ service for its functionality.
 
 ## License
 
-This project is licensed under the GNU License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the GNU License - see the [LICENSE.md](LICENSE.md) file for details.
