@@ -6,24 +6,29 @@ import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
 public class HttpServer {
 
     private static List<Activity> activities = new ArrayList<>();
+    private static final int PORT = 23727;
+    private static String route = "target/classes";
+    private static Map<String, BiFunction<HttpRequest, HttpResponse, String>> services= new HashMap();
 
-    public static void main(String[] args) throws IOException, URISyntaxException {
-        ServerSocket serverSocket = new ServerSocket(23727);
+    public static void start(String[] args) throws IOException, URISyntaxException {
+        ServerSocket serverSocket = new ServerSocket(PORT);
         boolean isRunning = true;
-        System.out.println("Server started.");
+        System.out.println("Server started through port " + PORT);
         while(isRunning){
             Socket clientSocket = serverSocket.accept();
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             String inputLine = "";
             boolean isFirstLine = true;
-            String outputLine = "";
             String file = "";
             String method = "";
 
@@ -37,38 +42,44 @@ public class HttpServer {
             }
 
             URI resourceURI = new URI(file);
-            if(method.equals("GET")){
-                if(resourceURI.getPath().startsWith("/api/activity")) outputLine = obtainActivities();
-                else outputLine = obtainFile(resourceURI.getPath(), clientSocket.getOutputStream());
-            }
-            else if(method.equals("POST")){
-                String time = resourceURI.getQuery().split("&")[0].split("=")[1];
-                String activity = resourceURI.getQuery().split("&")[1].split("=")[1];
-                activities.add(new Activity(time, activity));
-                outputLine = "HTTP/1.1 201 Accepted\r\n"
-                        + "Content-Type: text/plain\r\n"
-                        + "\r\n";
-            }
-            else if(method.equals("DELETE")){
-                String time = resourceURI.getQuery().split("=")[1];
-                Predicate<Activity> condition = activity -> activity.getTime().equals(time);
-                activities.removeIf(condition);
-                outputLine = "HTTP/1.1 201 Accepted\r\n"
-                        + "Content-Type: text/plain\r\n"
-                        + "\r\n";
-            }
-            else{
-                outputLine = "HTTP/1.1 405 Method Now Allowed\r\n"
-                        + "Content-Type: text/plain\r\n"
-                        + "\r\n";
-            }
-
+            HttpRequest req = new HttpRequest(resourceURI.getPath(), resourceURI.getQuery());
+            HttpResponse res = new HttpResponse();
+            String outputLine = processRequest(method, req, res, clientSocket.getOutputStream());
             out.println(outputLine);
             out.close();
             in.close();
             clientSocket.close();
         }
         serverSocket.close();
+    }
+
+    static String processRequest(String method, HttpRequest req, HttpResponse res, OutputStream out) throws IOException {
+        switch (method) {
+            case "GET":
+                if (req.getPath().startsWith("/app/activity")) return obtainActivities();
+                if (req.getPath().startsWith("/app")) return answerRequest(req, res);
+                else return obtainFile(req.getPath(), out);
+            case "POST": {
+                String time = req.getQuery().split("&")[0].split("=")[1];
+                String activity = req.getQuery().split("&")[1].split("=")[1];
+                activities.add(new Activity(time, activity));
+                return "HTTP/1.1 201 Accepted\r\n"
+                        + "Content-Type: text/plain\r\n"
+                        + "\r\n";
+            }
+            case "DELETE": {
+                String time = req.getQuery().split("=")[1];
+                Predicate<Activity> condition = activity -> activity.getTime().equals(time);
+                activities.removeIf(condition);
+                return "HTTP/1.1 201 Accepted\r\n"
+                        + "Content-Type: text/plain\r\n"
+                        + "\r\n";
+            }
+            default:
+                return "HTTP/1.1 405 Method Now Allowed\r\n"
+                        + "Content-Type: text/plain\r\n"
+                        + "\r\n";
+        }
     }
 
     static String obtainFile(String path, OutputStream out) throws IOException {
@@ -85,7 +96,7 @@ public class HttpServer {
         StringBuilder fileContent = new StringBuilder();
         if(extension.equals("html") || extension.equals("css") || extension.equals("js")){
             try {
-                BufferedReader in = new BufferedReader(new FileReader(("src/main/resources/static/" + file)));
+                BufferedReader in = new BufferedReader(new FileReader((route +  "/" +  file)));
                 while((inputLine = in.readLine()) != null){
                     fileContent.append(inputLine).append("\n");
                     if (!in.ready()) break;
@@ -97,18 +108,32 @@ public class HttpServer {
             }
         }
         else if(extension.equals("jpg") || extension.equals("jpeg") || extension.equals("png")){
-            out.write(response.getBytes());
-            File imageFile = new File("src/main/resources/static/" + file);
-            if(imageFile.exists()){
-                FileInputStream fis = new FileInputStream(imageFile);
-                byte[] imageBytes = new byte[(int) imageFile.length()];
-                fis.read(imageBytes);
-                out.write(imageBytes);
-                return response;
-            }
-            return notFound;
+            obtainImage(file, response, out);
+            return response;
         }
         else return notFound;
+    }
+
+    static String answerRequest(HttpRequest req, HttpResponse res){
+        BiFunction<HttpRequest, HttpResponse, String> service = services.get(req.getPath());
+        return "HTTP/1.1 200 OK\r\n"
+                + "Content-Type: application/json\r\n"
+                + "\r\n"
+                + "{\"response\":\""+ service.apply(req, res) +"\"}";
+    }
+
+    static void obtainImage(String file, String response, OutputStream out) throws IOException {
+        File imageFile = new File(route + "/" + file);
+        if(imageFile.exists()){
+            FileInputStream fis = new FileInputStream(imageFile);
+            byte[] imageBytes = new byte[(int) imageFile.length()];
+            fis.read(imageBytes);
+            out.write(response.getBytes());
+            out.write(imageBytes);
+        }
+        out.write(("HTTP/1.1 404 Not Found\r\n"
+                        + "Content-Type: text/plain\r\n"
+                        + "\r\n").getBytes());
     }
 
     static String obtainActivities(){
@@ -132,6 +157,14 @@ public class HttpServer {
                 "Content-Type: application/json\r\n" +
                 "\r\n" +
                 json;
+    }
+
+    public static void get(String route, BiFunction<HttpRequest, HttpResponse, String> function){
+        services.put("/app" + route, function);
+    }
+
+    public static void staticFiles(String path){
+        route = "target/classes" + path;
     }
 
     static String obtainContentType(String extension){
