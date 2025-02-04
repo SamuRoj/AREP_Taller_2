@@ -10,7 +10,7 @@ public class WebApplication {
     public static void main(String[] args) throws IOException, URISyntaxException {
         staticFiles("/static");
 
-        get("/hello", (req, res) -> "hello world!");
+        get("/hello", (req, res) -> "Hello World!");
 
         get("/greeting", (req, res) -> {
             return "Hello " + req.getValues("name");
@@ -24,5 +24,9 @@ public class WebApplication {
             return String.valueOf(Math.E);});
 
         HttpServer.start(args);
+    }
+
+    static void changeDirectory(String path){
+        staticFiles(path);
     }
 }

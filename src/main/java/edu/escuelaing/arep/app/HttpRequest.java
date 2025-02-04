@@ -1,7 +1,5 @@
 package edu.escuelaing.arep.app;
 
-import java.util.Arrays;
-
 public class HttpRequest {
     private String path;
     private String query;

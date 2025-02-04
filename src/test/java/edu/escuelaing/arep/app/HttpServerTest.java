@@ -1,14 +1,14 @@
 package edu.escuelaing.arep.app;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AppTest {
-
+public class HttpServerTest {
     @Test
     public void shouldObtainFile() {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -23,7 +23,7 @@ public class AppTest {
     }
 
     @Test
-    public void shouldNotObtainFile(){
+    public void shouldNotObtainFile() {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {
             HttpServer.obtainFile("/page.html", outputStream);
@@ -34,25 +34,25 @@ public class AppTest {
     }
 
     @Test
-    public void shouldObtainHtml(){
+    public void shouldObtainHtml() {
         String extension = HttpServer.obtainContentType("html");
         assertEquals("text/html", extension);
     }
 
     @Test
-    public void shouldObtainCss(){
+    public void shouldObtainCss() {
         String extension = HttpServer.obtainContentType("css");
         assertEquals("text/css", extension);
     }
 
     @Test
-    public void shouldObtainHJs(){
+    public void shouldObtainHJs() {
         String extension = HttpServer.obtainContentType("js");
         assertEquals("text/javascript", extension);
     }
 
     @Test
-    public void shouldObtainImage(){
+    public void shouldObtainImage() {
         String extension = HttpServer.obtainContentType("jpg");
         assertEquals("image/jpeg", extension);
     }
