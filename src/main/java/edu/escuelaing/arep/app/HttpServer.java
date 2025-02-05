@@ -165,6 +165,7 @@ public class HttpServer {
 
     public static void staticFiles(String path){
         route = "target/classes" + path;
+
     }
 
     static String obtainContentType(String extension){

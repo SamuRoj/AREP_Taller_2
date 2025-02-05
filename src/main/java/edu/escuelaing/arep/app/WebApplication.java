@@ -7,6 +7,7 @@ import static edu.escuelaing.arep.app.HttpServer.get;
 import static edu.escuelaing.arep.app.HttpServer.staticFiles;
 
 public class WebApplication {
+
     public static void main(String[] args) throws IOException, URISyntaxException {
         staticFiles("/static");
 

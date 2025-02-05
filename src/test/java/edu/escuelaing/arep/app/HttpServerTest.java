@@ -46,7 +46,7 @@ public class HttpServerTest {
     }
 
     @Test
-    public void shouldObtainHJs() {
+    public void shouldObtainJs() {
         String extension = HttpServer.obtainContentType("js");
         assertEquals("text/javascript", extension);
     }
