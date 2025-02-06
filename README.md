@@ -13,7 +13,7 @@ requests, and specify the location of static files that will be used in the serv
 - To check if Java is installed, run:
 
 ```
-  java -version
+java -version
 ```
   
 - If Java is not installed, download it from the official Oracle [website](https://www.oracle.com/co/java/technologies/downloads/).
@@ -23,7 +23,7 @@ requests, and specify the location of static files that will be used in the serv
 - To check if Maven is installed, run:
 
 ```
-    mvn --version
+mvn --version
 ```
 
 - If Maven is not installed, download it from the official Apache Maven [website](https://maven.apache.org/download.cgi).
@@ -33,7 +33,7 @@ requests, and specify the location of static files that will be used in the serv
 - To check if Git is installed, run:
 
 ```
-    git --version
+git --version
 ```
 
 - If Git is not installed, download it from the official Git [website](https://git-scm.com/downloads).
@@ -43,31 +43,31 @@ requests, and specify the location of static files that will be used in the serv
 1. Clone the repository to your local machine using Git.
 
 ```
-    git clone https://github.com/SamuRoj/AREP_Taller_2.git
+git clone https://github.com/SamuRoj/AREP_Taller_2.git
 ```
 
 2. Navigate to the project directory.
 
 ```
-    cd AREP_Taller_2
+cd AREP_Taller_2
 ```
 
 3. Build the project by running the following command:
 
 ```
-    mvn clean install
+mvn clean install
 ```
 
 4. Execute the project with the following command:
 
 ```
-    java -cp target/taller-2-1.0-SNAPSHOT.jar edu.escuelaing.arep.app.WebApplication
+java -cp target/taller-2-1.0-SNAPSHOT.jar edu.escuelaing.arep.app.WebApplication
 ```
 
 5. Once the server is running, open your web browser and visit:
 
 ```
-    http://localhost:23727/
+http://localhost:23727/
 ```
 
 ## Features of the application
@@ -173,7 +173,7 @@ the parameters of the query and returns one of them if it exists.
 - Execute them by running the following command:
 
 ```
-    mvn test
+mvn test
 ```
 
 ### HttpRequestTest
