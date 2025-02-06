@@ -99,8 +99,8 @@ services.
 
   ![QueryTest.png](src/main/resources/img/QueryTest.png)
 
-  - To test another parameter it has to be changed in the method getValues shown before. In case, the parameter
-  doesn't exist, null will be retrieved. 
+  - To test another parameter it has to be changed in the method getValues() shown before. In case, the parameter
+  doesn't exist, Not Found will be retrieved. 
 
 - A staticfiles() method that allows developers to define the folder where static files would be queried.
 
