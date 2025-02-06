@@ -12,9 +12,9 @@ requests, and specify the location of static files that will be used in the serv
 
 - To check if Java is installed, run:
 
-  ```
-    java -version
-  ```
+```
+  java -version
+```
   
 - If Java is not installed, download it from the official Oracle [website](https://www.oracle.com/co/java/technologies/downloads/).
 
@@ -175,6 +175,18 @@ the parameters of the query and returns one of them if it exists.
 ```
     mvn test
 ```
+
+### HttpRequestTest
+
+The tests in this file check the functionality of the method getValues() implemented in the class.
+
+- Example of test:
+
+![HttpRequestTest.png](src/main/resources/img/HttpRequestTest.png)
+
+- Image of the results:
+
+![HttpRequestTestResults.png](src/main/resources/img/HttpRequestTestResults.png)
 
 ### HttpServerTest
 

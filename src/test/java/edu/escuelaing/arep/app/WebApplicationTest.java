@@ -30,7 +30,7 @@ public class WebApplicationTest {
     }
 
     @AfterAll
-    public static void tearDown() throws InterruptedException {
+    public static void endServer() throws InterruptedException {
         if (webApp != null && webApp.isAlive()) {
             webApp.interrupt();
             webApp.join();

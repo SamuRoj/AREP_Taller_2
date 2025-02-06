@@ -30,7 +30,7 @@ public class HttpRequest {
         for(String i : params){
             if(i.split("=")[0].equals(value)) return i.split("=")[1];
         }
-        return null;
+        return "Not Found.";
     }
 
     @Override
